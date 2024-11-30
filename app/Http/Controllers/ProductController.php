@@ -98,6 +98,23 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Product updated successfully!');
     }
 
+    public function processPayment(Product $product)
+{
+    // Check if there's enough stock available
+    if ($product->quantity <= 0) {
+        return redirect()->route('products.show', $product->id)
+                         ->with('error', 'Sorry, this product is out of stock.');
+    }
+
+    // Deduct 1 from the stock (or deduct based on the number of items sold)
+    $product->decrement('quantity', 1); // Or you can use $product->quantity -= 1;
+
+    // Redirect back to the product page with a success message and the updated quantity
+    return redirect()->route('products.show', $product->id)
+                     ->with('success', 'Payment successful! The product has been sold.')
+                     ->with('quantityLeft', $product->quantity);
+}
+
 
     /**
      * Remove the specified resource from storage.

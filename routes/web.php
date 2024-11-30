@@ -30,6 +30,9 @@ Route::middleware('auth')->group(function () {
 
     // fetch all products
     Route::get('/products/list', [ProductController::class, 'list'])->name('products.list');
+    
+    // pay product
+    Route::post('/process-payment/{product}', [ProductController::class, 'processPayment'])->name('process.payment');
 
 
     // Dashboard Route (Pass Products to Dashboard View)
