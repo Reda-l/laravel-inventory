@@ -28,6 +28,10 @@ Route::middleware('auth')->group(function () {
     // Delete a product
     Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
+    // fetch all products
+    Route::get('/products/list', [ProductController::class, 'list'])->name('products.list');
+
+
     // Dashboard Route (Pass Products to Dashboard View)
     Route::get('/dashboard', function () {
         $products = Product::all(); // Fetch all products from the database
