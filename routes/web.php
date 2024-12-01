@@ -37,11 +37,16 @@ Route::middleware('auth')->group(function () {
 
 
     // Dashboard Route (Fetch Top Products and All Products)
-    Route::get('/dashboard', function () {
-        $topProducts = Product::topSoldProducts(); // Fetch top-selling products
-        $products = Product::all(); // Fetch all products from the database
-        return view('dashboard', compact('topProducts', 'products')); // Pass both sets of products to the view
-    })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () {
+    $topProducts = Product::topSoldProducts(); // Fetch top-selling products
+    $products = Product::all(); // Fetch all products from the database
+    // Prepare chart data (top product labels and sales)
+    $labels = $topProducts->pluck('name'); // Product names
+    $data = $topProducts->pluck('total_sales'); // Total sales values
+
+    return view('dashboard', compact('topProducts', 'products', 'labels', 'data')); // Pass both sets of products and chart data to the view
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 });
 
 // Auth routes for login, registration, etc.

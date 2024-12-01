@@ -125,8 +125,13 @@ class ProductController extends Controller
 
     public function topProducts()
     {
-        $topProducts = Product::topSoldProducts(); // Get the top sold products
-        return view('dashboard', compact('topProducts')); // Pass topProducts to the view
+        $topProducts = Product::topSoldProducts();
+
+        // Prepare chart data
+        $labels = $topProducts->pluck('name'); // Product names
+        $data = $topProducts->pluck('total_sales'); // Total sales values
+
+        return view('dashboard', compact('topProducts', 'labels', 'data'));
     }
 
     /**

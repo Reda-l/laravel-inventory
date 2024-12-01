@@ -1,15 +1,32 @@
 <x-app-layout>
     <x-slot name="header">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-    <div class="py-12">
-        <!-- Top Products -->
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-12 flex justify-between">
+        <!-- Top Products Chart -->
+        <div class="w-full sm:w-1/2 lg:w-1/2 mx-auto sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <h1 class="text-base font-semibold text-gray-900">Top Products</h1>
+                    <p class="mt-2 text-sm text-gray-700">Products with the highest sales in your store.</p>
+                </div>
+            </div>
+    
+            <div class="mt-8">
+                <!-- Chart Container -->
+                <canvas id="topProductsChart"></canvas>
+            </div>
+        </div>
+    
+        <!-- Top Products Table -->
+        <div class="w-full sm:w-1/2 lg:w-1/2 mx-auto sm:px-6 lg:px-8">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-base font-semibold text-gray-900">Top Products Table</h1>
                     <p class="mt-2 text-sm text-gray-700">Products with the highest sales in your store.</p>
                 </div>
             </div>
@@ -20,7 +37,8 @@
                         <table class="min-w-full divide-y divide-gray-300">
                             <thead>
                                 <tr>
-                                    <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">
+                                    <th
+                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">
                                         Product Name
                                     </th>
                                     <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total Sales</th>
@@ -49,13 +67,15 @@
         </div>
     </div>
     
+    
     <div class="py-12">
         <!-- Products Table -->
         <div class=" max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <h1 class="text-base font-semibold text-gray-900">Products</h1>
-                    <p class="mt-2 text-sm text-gray-700">A list of all the products in your store, including their name,
+                    <p class="mt-2 text-sm text-gray-700">A list of all the products in your store, including their
+                        name,
                         description, price, and actions.</p>
                 </div>
                 <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -90,8 +110,10 @@
                             <tbody class="divide-y divide-gray-200 bg-white">
                                 @foreach ($products as $product)
                                     <tr>
-                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
-                                            <a href="{{ route('products.show', $product->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                        <td
+                                            class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
+                                            <a href="{{ route('products.show', $product->id) }}"
+                                                class="text-indigo-600 hover:text-indigo-900">
                                                 {{ $product->name }}
                                             </a>
                                         </td>
@@ -168,7 +190,8 @@
                                 <div class="mt-4">
                                     <label for="quantity"
                                         class="block text-sm font-medium text-gray-700">Quantity</label>
-                                    <input type="number" name="quantity" id="quantity" value="{{ old('quantity') }}"
+                                    <input type="number" name="quantity" id="quantity"
+                                        value="{{ old('quantity') }}"
                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                                         required>
                                 </div>
@@ -191,6 +214,33 @@
             </div>
 
             <script>
+                // Get the data passed from the controller
+                const labels = @json($labels); // Product names
+                const data = @json($data); // Total sales
+
+                // Create the chart
+                const ctx = document.getElementById('topProductsChart').getContext('2d');
+                const topProductsChart = new Chart(ctx, {
+                    type: 'bar', // Type of chart (bar chart)
+                    data: {
+                        labels: labels, // Product names as labels
+                        datasets: [{
+                            label: 'Total Sales',
+                            data: data, // Sales data
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)', // Bar color
+                            borderColor: 'rgba(75, 192, 192, 1)', // Border color
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true // Start y-axis from 0
+                            }
+                        }
+                    }
+                });
+
                 function openModal() {
                     document.getElementById('createProductModal').classList.remove('hidden');
                 }
