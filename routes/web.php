@@ -30,15 +30,17 @@ Route::middleware('auth')->group(function () {
 
     // fetch all products
     Route::get('/products/list', [ProductController::class, 'list'])->name('products.list');
-    
+
     // pay product
     Route::post('/process-payment/{product}', [ProductController::class, 'processPayment'])->name('process.payment');
 
 
-    // Dashboard Route (Pass Products to Dashboard View)
+
+    // Dashboard Route (Fetch Top Products and All Products)
     Route::get('/dashboard', function () {
+        $topProducts = Product::topSoldProducts(); // Fetch top-selling products
         $products = Product::all(); // Fetch all products from the database
-        return view('dashboard', compact('products')); // Pass the products to the view
+        return view('dashboard', compact('topProducts', 'products')); // Pass both sets of products to the view
     })->middleware(['auth', 'verified'])->name('dashboard');
 });
 

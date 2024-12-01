@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\Sale;
 
 class ProductController extends Controller
 {
@@ -99,22 +100,34 @@ class ProductController extends Controller
     }
 
     public function processPayment(Product $product)
-{
-    // Check if there's enough stock available
-    if ($product->quantity <= 0) {
+    {
+        // Check if there's enough stock available
+        if ($product->quantity <= 0) {
+            return redirect()->route('products.show', $product->id)
+                ->with('error', 'Sorry, this product is out of stock.');
+        }
+
+        // Deduct 1 from the stock (or deduct based on the number of items sold)
+        $quantitySold = 1; // You can modify this if you allow different quantities
+        $product->decrement('quantity', $quantitySold);
+
+        // Record the sale in the sales table
+        Sale::create([
+            'product_id' => $product->id,
+            'quantity' => $quantitySold,
+        ]);
+
+        // Redirect back to the product page with a success message and the updated quantity
         return redirect()->route('products.show', $product->id)
-                         ->with('error', 'Sorry, this product is out of stock.');
+            ->with('success', 'Payment successful! The product has been sold.')
+            ->with('quantityLeft', $product->quantity);
     }
 
-    // Deduct 1 from the stock (or deduct based on the number of items sold)
-    $product->decrement('quantity', 1); // Or you can use $product->quantity -= 1;
-
-    // Redirect back to the product page with a success message and the updated quantity
-    return redirect()->route('products.show', $product->id)
-                     ->with('success', 'Payment successful! The product has been sold.')
-                     ->with('quantityLeft', $product->quantity);
-}
-
+    public function topProducts()
+    {
+        $topProducts = Product::topSoldProducts(); // Get the top sold products
+        return view('dashboard', compact('topProducts')); // Pass topProducts to the view
+    }
 
     /**
      * Remove the specified resource from storage.

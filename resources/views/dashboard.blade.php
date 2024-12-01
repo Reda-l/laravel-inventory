@@ -4,7 +4,51 @@
             {{ __('Dashboard') }}
         </h2>
     </x-slot>
-
+    <div class="py-12">
+        <!-- Top Products -->
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="sm:flex sm:items-center">
+                <div class="sm:flex-auto">
+                    <h1 class="text-base font-semibold text-gray-900">Top Products</h1>
+                    <p class="mt-2 text-sm text-gray-700">Products with the highest sales in your store.</p>
+                </div>
+            </div>
+    
+            <div class="mt-8 flow-root">
+                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                    <div class="inline-block min-w-full py-2 align-middle">
+                        <table class="min-w-full divide-y divide-gray-300">
+                            <thead>
+                                <tr>
+                                    <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 lg:pl-8">
+                                        Product Name
+                                    </th>
+                                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total Sales</th>
+                                    <th class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                @foreach ($topProducts as $product)
+                                    <tr>
+                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8">
+                                            {{ $product->name }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {{ $product->total_sales }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            ${{ number_format($product->price, 2) }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <div class="py-12">
         <!-- Products Table -->
         <div class=" max-w-7xl mx-auto sm:px-6 lg:px-8">

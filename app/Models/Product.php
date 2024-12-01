@@ -11,9 +11,28 @@ class Product extends Model
 
     // Define the fillable fields for mass assignment
     protected $fillable = [
-        'name', 
-        'sku', 
-        'price', 
+        'name',
+        'sku',
+        'price',
         'quantity'
     ];
+
+    /**
+     * Get the sales associated with the product.
+     */
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    public static function topSoldProducts($limit = 5)
+{
+    return Product::select('products.*')
+        ->join('sales', 'products.id', '=', 'sales.product_id')
+        ->selectRaw('SUM(sales.quantity) as total_sales') // Ensure we use total_sales here
+        ->groupBy('products.id')
+        ->orderByDesc('total_sales')
+        ->take($limit)
+        ->get();
+}
 }
